@@ -4,6 +4,11 @@
 
 This project is born as demo for using the **[Salesforce SOAP API Client OSGi Bundle](https://github.com/amusarra/salesforce-client-soap)**. This sample project implements a set of Gogo Shell commands that allow us to interact with the Salesforce CRM system.
 
+The Force.com SOAP API (formerly known as the Force.com Web Services API) lets you integrate Force.com applications that can create, retrieve, update or delete records managed by Salesforce, Force.com, and Database.com, records such as accounts, leads, and custom objects. With more than 20 different calls, SOAP API also lets you to maintain passwords, perform searches, and much more. You can use the SOAP API with any programming language that supports Web services.
+
+
+![Figure 1 - Integration scenario Liferay 7 and CRM via SOAP](https://s3.amazonaws.com/dfc-wiki/en/images/1/17/SOAP-API-01.png)
+
 The commands that are implemented:
 
 1. **salesforce:login**: Login to your Salesforce instance
@@ -253,7 +258,9 @@ XML Code 2 - SOAP Response for the salesforce:getNewestAccount operation
 If you follow this resources you could see how to use Salesforce SOAP API.
 
 1. [Introducing SOAP API](https://developer.salesforce.com/docs/atlas.en-us.api.meta/api/sforce_api_quickstart_intro.htm)
-2. [Force.com Web Service Connector (WSC)](https://github.com/forcedotcom/wsc)
+2. [Cheat Sheets](https://developer.salesforce.com/page/Cheat_Sheets)
+3. [Force.com SOAP API Cheatsheet](http://resources.docs.salesforce.com/rel1/doc/en-us/static/pdf/SF_Soap_API_cheatsheet_web.pdf)
+3. [Force.com Web Service Connector (WSC)](https://github.com/forcedotcom/wsc)
 
 [![Liferay 7: Demo Salesforce Gogo Shell Command ](https://img.youtube.com/vi/nQXqzKpnxoc/0.jpg)](https://youtu.be/nQXqzKpnxoc)
 
