@@ -153,7 +153,33 @@ g! salesforce:getNewestAccount 1
 └──────────────────────────┴──────────────────────────┴──────────────────────────┴─────────────────────────┴─────────────────────────┴─────────────────────────┘
 ```
 
-The [SalesforceClientCommand]() component implementing the commands is linked to the [SalesforceClientCommandConfiguration]() configuration (via configurationPid)
+The [SalesforceClientCommand](https://github.com/amusarra/salesforce-client-gogoshell-command/blob/master/src/main/java/it/dontesta/labs/liferay/salesforce/client/command/SalesforceClientCommand.java) OSGi component is linked to the [SalesforceClientCommandConfiguration](https://github.com/amusarra/salesforce-client-gogoshell-command/blob/master/src/main/java/it/dontesta/labs/liferay/salesforce/client/command/configuration/SalesforceClientCommandConfiguration.java) configuration (via **configurationPid** attribute).
+
+```java
+...
+@Component(
+		configurationPid = "it.dontesta.labs.liferay.salesforce.client.command.configuration.SalesforceClientCommandConfiguration",
+		property = {
+				"osgi.command.function=login",
+				"osgi.command.function=createAccount",
+				"osgi.command.function=getNewestAccount",
+				"osgi.command.scope=salesforce"
+		},
+		service = Object.class
+)
+@Descriptor("Gogo Shell Command Series for Salesforce "
+		+ "(Example: create leads, create customers, search, etc.).")
+public class SalesforceClientCommand {
+	...
+}
+```
+
+![Salesforce Client Gogo Shell Command OSGi Configuration ](https://www.dontesta.it/wp-content/uploads/2017/07/SalesforceClientGogoShellCommand_Configuration.png)
+
+[![Liferay 7: Demo Salesforce Gogo Shell Command ](https://img.youtube.com/vi/nQXqzKpnxoc/0.jpg)](https://youtu.be/nQXqzKpnxoc)
+
+Video 1 - Liferay 7: Demo Salesforce Gogo Shell Command
+
 ### Resources
 If you follow this resources you could see how to use Salesforce SOAP API.
 
