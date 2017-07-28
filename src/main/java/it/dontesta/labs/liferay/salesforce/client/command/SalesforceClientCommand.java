@@ -167,6 +167,7 @@ public class SalesforceClientCommand {
 			Validator.isNotNull(confirm)) {
 
 			Console.println("Abort operation", "red");
+			scanner.close();
 			return;
 		}
 
@@ -183,6 +184,7 @@ public class SalesforceClientCommand {
 			
 			if (Validator.isNull(partnerConnection)) {
 				Console.println("You must do login first.", "red");
+				scanner.close();
 				return;
 			}
 			
@@ -209,6 +211,8 @@ public class SalesforceClientCommand {
 			System.out.println(ansi().eraseScreen());
 			e.printStackTrace();
 		}
+
+		scanner.close();
 	}
 
 	@Descriptor("Query for the newest contacts")
