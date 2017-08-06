@@ -56,7 +56,7 @@
 		<dependency>
 			<groupId>it.dontesta.labs.liferay.salesforce.client.soap</groupId>
 			<artifactId>salesforce-client-soap</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.liferay.portal</groupId>

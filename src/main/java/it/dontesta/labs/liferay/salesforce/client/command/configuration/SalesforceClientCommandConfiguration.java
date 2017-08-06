@@ -54,10 +54,22 @@ public interface SalesforceClientCommandConfiguration {
 	public String authEndpoint();
 
 	@Meta.AD(
+		deflt = "https://login.salesforce.com/services/Soap/c/40.0",
+		description = "Setting the Salesforce endpoint for Enterprise Connection",
+		required = false)
+	public String authEndpointEnterprise();
+
+	@Meta.AD(
 		deflt = "/tmp/traceSalesforcePartner.log", 
 		description = "Setting full path of the trace file", 
 		required = false)
 	public String traceFile();
+
+	@Meta.AD(
+		deflt = "/tmp/traceSalesforceEnterprise.log",
+		description = "Setting full path of the trace file for Enterprise Connection",
+		required = false)
+	public String traceFileEnterprise();
 
 	@Meta.AD(
 		deflt = "true", 

@@ -33,6 +33,9 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Scanner;
 
+import com.sforce.soap.enterprise.Connector;
+import com.sforce.soap.enterprise.EnterpriseConnection;
+import com.sforce.soap.enterprise.sobject.Account;
 import org.apache.felix.service.command.Descriptor;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -64,10 +67,12 @@ import it.dontesta.labs.liferay.salesforce.client.command.util.Console;
 @Component(
 		configurationPid = "it.dontesta.labs.liferay.salesforce.client.command.configuration.SalesforceClientCommandConfiguration",
 		property = { 
-				"osgi.command.function=login", 
-				"osgi.command.function=createAccount", 
-				"osgi.command.function=getNewestAccount", 
-				"osgi.command.scope=salesforce" 
+				"osgi.command.function=login",
+				"osgi.command.function=loginEnterprise",
+				"osgi.command.function=createAccount",
+				"osgi.command.function=getNewestAccount",
+				"osgi.command.function=getNewestAccountEnterprise",
+				"osgi.command.scope=salesforce"
 		}, 
 		service = Object.class
 )
@@ -76,6 +81,7 @@ import it.dontesta.labs.liferay.salesforce.client.command.util.Console;
 public class SalesforceClientCommand {
 
 	static PartnerConnection partnerConnection = null;
+	static EnterpriseConnection enterpriseConnection = null;
 	
 	/**
 	 * Login to your Saleforce instance
@@ -134,6 +140,66 @@ public class SalesforceClientCommand {
 			System.out.println(
 				ansi().render(
 					"@|red Login error to Salesforce with username " + username + "|@"));
+		}
+	}
+
+	/**
+	 * Login to your Saleforce instance with Enterprise Connection
+	 *
+	 * @param usename
+	 *            Your Salesforce username
+	 * @param password
+	 *            Your Saleforce password (Note: append your API Key to Password)
+	 * @throws PortalException
+	 */
+	@Descriptor("Login to your Salesforce instance")
+	public void loginEnterprise(
+			@Descriptor("The your username") String username,
+			@Descriptor("The your password + append your API Key") String password
+	)
+			throws PortalException {
+
+		boolean success = false;
+
+		try {
+			ConnectorConfig config = new ConnectorConfig();
+			config.setUsername(username);
+			config.setPassword(password);
+			config.setAuthEndpoint(_configuration.authEndpointEnterprise());
+			config.setTraceFile(_configuration.traceFileEnterprise());
+			config.setTraceMessage(_configuration.traceMessage());
+			config.setPrettyPrintXml(_configuration.prettyPrintXml());
+
+			enterpriseConnection = Connector.newConnection(config);
+			success = true;
+
+			if (success) {
+				System.out.println(ansi().eraseScreen());
+
+				System.out.println(
+						ansi().render(
+								"@|green Login successful to Salesforce with username "
+										+ username
+										+ "|@"));
+
+				System.out.println(ansi().render("@|yellow Welcome "
+						+ enterpriseConnection.getUserInfo().getUserFullName()
+						+ "|@"));
+
+				System.out.println(ansi().render("@|yellow Your sessionId is: "
+						+ enterpriseConnection.getSessionHeader().getSessionId()
+						+ "|@"));
+			}
+		}
+		catch (Exception e) {
+			System.out.println(ansi().eraseScreen());
+			e.printStackTrace();
+		}
+
+		if (!success) {
+			System.out.println(
+					ansi().render(
+							"@|red Login error to Salesforce with username " + username + "|@"));
 		}
 	}
 
@@ -217,9 +283,9 @@ public class SalesforceClientCommand {
 
 	@Descriptor("Query for the newest contacts")
 	public void getNewestAccount(
-		@Descriptor("How many records returned") int accountLimit
-		)
-		throws PortalException {
+			@Descriptor("How many records returned") int accountLimit
+	)
+			throws PortalException {
 
 		if (Validator.isNull(partnerConnection)) {
 			Console.println("You must do login first.", "red");
@@ -229,21 +295,21 @@ public class SalesforceClientCommand {
 		AsciiTable at = new AsciiTable();
 		at.addRule();
 		at.addRow(
-			"Id", "Account Name", "Web Site", "Phone",
-			"Type", "CreatedDate");
+				"Id", "Account Name", "Web Site", "Phone",
+				"Type", "CreatedDate");
 		at.addRule();
-		
+
 		try {
 			QueryResult queryResults = partnerConnection.query(
-				"SELECT Id, Name, Type, Website, CreatedDate, CreatedById, " +
-					"Phone FROM Account ORDER BY CreatedDate DESC LIMIT " +
-					accountLimit);
+					"SELECT Id, Name, Type, Website, CreatedDate, CreatedById, " +
+							"Phone FROM Account ORDER BY CreatedDate DESC LIMIT " +
+							accountLimit);
 			if (queryResults.getSize() > 0) {
 				for (SObject s : queryResults.getRecords()) {
 					Collection<String> columnsValue = new ArrayList<>();
 					columnsValue.add(s.getId());
 					columnsValue.add(s.getField("Name").toString());
-					
+
 					if (Validator.isNotNull(s.getField("Website"))) {
 						columnsValue.add(s.getField("Website").toString());
 					} else {
@@ -263,6 +329,71 @@ public class SalesforceClientCommand {
 					}
 
 					columnsValue.add(s.getField("CreatedDate").toString());
+
+					at.addRow(columnsValue);
+					at.addRule();
+				}
+			} else {
+				at.addRow("No Account found");
+				at.setTextAlignment(TextAlignment.CENTER);
+				at.addRule();
+			}
+
+			Console.println(at.render(160), "white");
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Descriptor("Query for the newest contacts by Enterprise connection")
+	public void getNewestAccountEnterprise(
+		@Descriptor("How many records returned") int accountLimit
+		)
+		throws PortalException {
+
+		if (Validator.isNull(enterpriseConnection)) {
+			Console.println("You must do login first (Enterprise connection).", "red");
+			return;
+		}
+
+		AsciiTable at = new AsciiTable();
+		at.addRule();
+		at.addRow(
+			"Id", "Account Name", "Web Site", "Phone",
+			"Type", "CreatedDate");
+		at.addRule();
+		
+		try {
+			com.sforce.soap.enterprise.QueryResult queryResults = enterpriseConnection.query(
+				"SELECT Id, Name, Type, Website, CreatedDate, CreatedById, " +
+					"Phone FROM Account ORDER BY CreatedDate DESC LIMIT " +
+					accountLimit);
+			if (queryResults.getSize() > 0) {
+				for (com.sforce.soap.enterprise.sobject.SObject s : queryResults.getRecords()) {
+					Collection<String> columnsValue = new ArrayList<>();
+					columnsValue.add(s.getId());
+					columnsValue.add(((Account) s).getName());
+					
+					if (Validator.isNotNull(((Account) s).getWebsite())) {
+						columnsValue.add(((Account) s).getWebsite().toString());
+					} else {
+						columnsValue.add(StringPool.BLANK);
+					}
+
+					if (Validator.isNotNull(((Account) s).getPhone())) {
+						columnsValue.add(((Account) s).getPhone().toString());
+					} else {
+						columnsValue.add(StringPool.BLANK);
+					}
+
+					if (Validator.isNotNull(((Account) s).getType())) {
+						columnsValue.add(((Account) s).getType().toString());
+					} else {
+						columnsValue.add(StringPool.BLANK);
+					}
+
+					columnsValue.add(((Account) s).getCreatedDate().toString());
 					
 					at.addRow(columnsValue);
 					at.addRule();
