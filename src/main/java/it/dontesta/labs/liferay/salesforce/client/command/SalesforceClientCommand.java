@@ -80,9 +80,6 @@ import it.dontesta.labs.liferay.salesforce.client.command.util.Console;
 		+ "(Example: create leads, create customers, search, etc.).")
 public class SalesforceClientCommand {
 
-	static PartnerConnection partnerConnection = null;
-	static EnterpriseConnection enterpriseConnection = null;
-	
 	/**
 	 * Login to your Saleforce instance
 	 * 
@@ -417,6 +414,9 @@ public class SalesforceClientCommand {
 		_configuration = Configurable.createConfigurable(
 			SalesforceClientCommandConfiguration.class, properties);
 	}
+
+	private static PartnerConnection partnerConnection = null;
+	private static EnterpriseConnection enterpriseConnection = null;
 
 	private volatile SalesforceClientCommandConfiguration _configuration;
 }
