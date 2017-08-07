@@ -80,16 +80,20 @@ import it.dontesta.labs.liferay.salesforce.client.command.util.Console;
 		+ "(Example: create leads, create customers, search, etc.).")
 public class SalesforceClientCommand {
 
-	/**
-	 * Login to your Saleforce instance
+    private static PartnerConnection partnerConnection = null;
+    private static EnterpriseConnection enterpriseConnection = null;
+    private volatile SalesforceClientCommandConfiguration _configuration;
+
+    /**
+	 * Login to your Saleforce instance using the Partner Connection
 	 * 
-	 * @param usename
+	 * @param username
 	 *            Your Salesforce username
 	 * @param password
 	 *            Your Saleforce password (Note: append your API Key to Password)
 	 * @throws PortalException
 	 */
-	@Descriptor("Login to your Salesforce instance")
+	@Descriptor("Login to your Salesforce instance using the Partner Connection")
 	public void login(
 		@Descriptor("The your username") String username,
 		@Descriptor("The your password + append your API Key") String password
@@ -141,15 +145,15 @@ public class SalesforceClientCommand {
 	}
 
 	/**
-	 * Login to your Saleforce instance with Enterprise Connection
+	 * Login to your Saleforce instance using the Enterprise Connection
 	 *
-	 * @param usename
+	 * @param username
 	 *            Your Salesforce username
 	 * @param password
 	 *            Your Saleforce password (Note: append your API Key to Password)
 	 * @throws PortalException
 	 */
-	@Descriptor("Login to your Salesforce instance")
+	@Descriptor("Login to your Salesforce instance using the Enterprise Connection")
 	public void loginEnterprise(
 			@Descriptor("The your username") String username,
 			@Descriptor("The your password + append your API Key") String password
@@ -201,11 +205,11 @@ public class SalesforceClientCommand {
 	}
 
 	/**
-	 * Create account into your Salesforce instance
+	 * Create account into your Salesforce instance using the Partner Connection
 	 * 
 	 * @throws PortalException
 	 */
-	@Descriptor("Create account into your Salesforce instance")
+	@Descriptor("Create account into your Salesforce instance using the Partner Connection")
 	public void createAccount() throws PortalException {
 		System.out.println(ansi().eraseScreen());
 
@@ -226,11 +230,10 @@ public class SalesforceClientCommand {
 		String confirm = GetterUtil.getString(scanner.nextLine(), "y");
 		confirm = confirm.toLowerCase().trim();
 		
-		if (!confirm.equals("y") && !confirm.equals("yes") &&
+		if (!"y".equals(confirm) && !"yes".equals(confirm) &&
 			Validator.isNotNull(confirm)) {
 
 			Console.println("Abort operation", "red");
-			scanner.close();
 			return;
 		}
 
@@ -274,11 +277,15 @@ public class SalesforceClientCommand {
 			System.out.println(ansi().eraseScreen());
 			e.printStackTrace();
 		}
-
-		scanner.close();
 	}
 
-	@Descriptor("Query for the newest contacts")
+    /**
+     * Query for the newest contacts using the Partner Connection
+     *
+     * @param accountLimit How many records returned
+     * @throws PortalException
+     */
+	@Descriptor("Query for the newest contacts using the Partner Connection")
 	public void getNewestAccount(
 			@Descriptor("How many records returned") int accountLimit
 	)
@@ -343,7 +350,13 @@ public class SalesforceClientCommand {
 		}
 	}
 
-	@Descriptor("Query for the newest contacts by Enterprise connection")
+    /**
+     * Query for the newest contacts using the Enterprise Connection
+     *
+     * @param accountLimit How many records returned
+     * @throws PortalException
+     */
+	@Descriptor("Query for the newest contacts using the Enterprise Connection")
 	public void getNewestAccountEnterprise(
 		@Descriptor("How many records returned") int accountLimit
 		)
@@ -414,9 +427,4 @@ public class SalesforceClientCommand {
 		_configuration = Configurable.createConfigurable(
 			SalesforceClientCommandConfiguration.class, properties);
 	}
-
-	private static PartnerConnection partnerConnection = null;
-	private static EnterpriseConnection enterpriseConnection = null;
-
-	private volatile SalesforceClientCommandConfiguration _configuration;
 }
