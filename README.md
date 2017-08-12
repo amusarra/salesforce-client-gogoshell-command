@@ -1,5 +1,6 @@
 
 # Salesforce Liferay Gogo Shell Command Client
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/44af66efc4d246519d86fda127de0406)](https://www.codacy.com/app/amusarra/salesforce-client-gogoshell-command?utm_source=github.com&utm_medium=referral&utm_content=amusarra/salesforce-client-gogoshell-command&utm_campaign=badger)
 [![Build Status](https://travis-ci.org/amusarra/salesforce-client-gogoshell-command.svg?branch=master)](https://travis-ci.org/amusarra/salesforce-client-gogoshell-command)
 
 This project is born as demo for using the **[Salesforce SOAP API Client OSGi Bundle](https://github.com/amusarra/salesforce-client-soap)**. 
