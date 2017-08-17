@@ -327,7 +327,8 @@ prettyPrintXml         │ Pretty print xml         │ boolean │ true        
 ```
 Console 11 - OSGi MetaType configuration
 
-You can of course change the values based on your needs.
+You can of course change the values based on your needs. Apache Karaf provides a [set of commands](http://karaf.apache.org/manual/latest/#__code_config_code_commands) to 
+manage the configuration.
 
 ### Resources
 If you follow this resources you could see how to use Salesforce SOAP API.
