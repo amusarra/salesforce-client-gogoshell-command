@@ -312,7 +312,7 @@ salesforce:getNewestAccount             salesforce:login
 Console 11 - Available command with the scope salesforce
 
 To access the configuration of this bundle, you can do it directly from the Apache Karaf console via the command: 
-``config:meta it.dontesta.labs.liferay.salesforce.client.command.configuration.SalesforceClientCommandConfiguration`
+``config:meta it.dontesta.labs.liferay.salesforce.client.command.configuration.SalesforceClientCommandConfiguration``
 
 ```
 Meta type informations for pid: it.dontesta.labs.liferay.salesforce.client.command.configuration.SalesforceClientCommandConfiguration
