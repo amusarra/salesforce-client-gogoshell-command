@@ -30,16 +30,11 @@ package it.dontesta.labs.liferay.salesforce.client.command.configuration;
  * #L%
  */
 
-import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition;
-
 import aQute.bnd.annotation.metatype.Meta;
 
 /**
- * @author Antonio Musarra <antonio.musarra@gmail.com>
+ * @author Antonio Musarra antonio.musarra@gmail.com
  */
-@ExtendedObjectClassDefinition(
-	category = "Salesforce"
-)
 @Meta.OCD(
 	id = "it.dontesta.labs.liferay.salesforce.client.command.configuration.SalesforceClientCommandConfiguration",
 	localization = "content/Language",

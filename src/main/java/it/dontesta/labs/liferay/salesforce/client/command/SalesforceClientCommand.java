@@ -28,10 +28,7 @@ package it.dontesta.labs.liferay.salesforce.client.command;
 
 import static org.fusesource.jansi.Ansi.ansi;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 import com.sforce.soap.enterprise.Connector;
 import com.sforce.soap.enterprise.EnterpriseConnection;
@@ -41,10 +38,6 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
 
-import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.Validator;
 import com.sforce.soap.partner.Error;
 import com.sforce.soap.partner.PartnerConnection;
 import com.sforce.soap.partner.QueryResult;
@@ -62,7 +55,7 @@ import it.dontesta.labs.liferay.salesforce.client.command.util.Console;
  * Gogo Shell Command Series for Salesforce 
  * (Example: create leads, create customers, search, etc.).
  * 
- * @author Antonio Musarra <antonio.musarra@gmail.com>
+ * @author Antonio Musarra antonio.musarra@gmail.com
  */
 @Component(
 		configurationPid = "it.dontesta.labs.liferay.salesforce.client.command.configuration.SalesforceClientCommandConfiguration",
@@ -91,14 +84,14 @@ public class SalesforceClientCommand {
 	 *            Your Salesforce username
 	 * @param password
 	 *            Your Saleforce password (Note: append your API Key to Password)
-	 * @throws PortalException
+	 * @throws Exception When login failed
 	 */
 	@Descriptor("Login to your Salesforce instance using the Partner Connection")
 	public void login(
 		@Descriptor("The your username") String username,
 		@Descriptor("The your password + append your API Key") String password
 		)
-		throws PortalException {
+		throws Exception {
 		
 		boolean success = false;
 
@@ -114,23 +107,21 @@ public class SalesforceClientCommand {
 			partnerConnection = new PartnerConnection(config);
 			success = true;
 
-			if (success) {
-				System.out.println(ansi().eraseScreen());
-				
-				System.out.println(
-					ansi().render(
-						"@|green Login successful to Salesforce with username " 
-					+ username
-					+ "|@"));
-				
-				System.out.println(ansi().render("@|yellow Welcome "
-					+ partnerConnection.getUserInfo().getUserFullName()
-					+ "|@"));
-				
-				System.out.println(ansi().render("@|yellow Your sessionId is: " 
-					+ partnerConnection.getSessionHeader().getSessionId()
-					+ "|@"));
-			}
+			System.out.println(ansi().eraseScreen());
+
+			System.out.println(
+                ansi().render(
+                    "@|green Login successful to Salesforce with username "
+                + username
+                + "|@"));
+
+			System.out.println(ansi().render("@|yellow Welcome "
+                + partnerConnection.getUserInfo().getUserFullName()
+                + "|@"));
+
+			System.out.println(ansi().render("@|yellow Your sessionId is: "
+                + partnerConnection.getSessionHeader().getSessionId()
+                + "|@"));
 		}
 		catch (Exception e) {
 			System.out.println(ansi().eraseScreen());
@@ -151,14 +142,14 @@ public class SalesforceClientCommand {
 	 *            Your Salesforce username
 	 * @param password
 	 *            Your Saleforce password (Note: append your API Key to Password)
-	 * @throws PortalException
+	 * @throws Exception When login failed
 	 */
 	@Descriptor("Login to your Salesforce instance using the Enterprise Connection")
 	public void loginEnterprise(
 			@Descriptor("The your username") String username,
 			@Descriptor("The your password + append your API Key") String password
 	)
-			throws PortalException {
+			throws Exception {
 
 		boolean success = false;
 
@@ -174,23 +165,21 @@ public class SalesforceClientCommand {
 			enterpriseConnection = Connector.newConnection(config);
 			success = true;
 
-			if (success) {
-				System.out.println(ansi().eraseScreen());
+			System.out.println(ansi().eraseScreen());
 
-				System.out.println(
-						ansi().render(
-								"@|green Login successful to Salesforce with username "
-										+ username
-										+ "|@"));
+			System.out.println(
+                    ansi().render(
+                            "@|green Login successful to Salesforce with username "
+                                    + username
+                                    + "|@"));
 
-				System.out.println(ansi().render("@|yellow Welcome "
-						+ enterpriseConnection.getUserInfo().getUserFullName()
-						+ "|@"));
+			System.out.println(ansi().render("@|yellow Welcome "
+                    + enterpriseConnection.getUserInfo().getUserFullName()
+                    + "|@"));
 
-				System.out.println(ansi().render("@|yellow Your sessionId is: "
-						+ enterpriseConnection.getSessionHeader().getSessionId()
-						+ "|@"));
-			}
+			System.out.println(ansi().render("@|yellow Your sessionId is: "
+                    + enterpriseConnection.getSessionHeader().getSessionId()
+                    + "|@"));
 		}
 		catch (Exception e) {
 			System.out.println(ansi().eraseScreen());
@@ -207,31 +196,30 @@ public class SalesforceClientCommand {
 	/**
 	 * Create account into your Salesforce instance using the Partner Connection
 	 * 
-	 * @throws PortalException
+	 * @throws Exception When create account failed
 	 */
 	@Descriptor("Create account into your Salesforce instance using the Partner Connection")
-	public void createAccount() throws PortalException {
+	public void createAccount() throws Exception {
 		System.out.println(ansi().eraseScreen());
 
 		Scanner scanner = new Scanner(System.in);
 		
 		Console.print("Account Name: ");
-		String accountName = GetterUtil.getString(scanner.nextLine());
+		String accountName = scanner.nextLine();
 
 		Console.print("Web Site: ");
-		String website = GetterUtil.getString(scanner.nextLine());
+		String website = scanner.nextLine();
 
 		Console.print("Phone: ");
-		String phone = GetterUtil.getString(scanner.nextLine());
+		String phone = scanner.nextLine();
 
 		Console.print(
 			"Do you confirm that I can start creating this account? (y): ");
 		
-		String confirm = GetterUtil.getString(scanner.nextLine(), "y");
+		String confirm = Optional.of(scanner.nextLine()).orElse("y");
 		confirm = confirm.toLowerCase().trim();
 		
-		if (!"y".equals(confirm) && !"yes".equals(confirm) &&
-			Validator.isNotNull(confirm)) {
+		if (!"y".equals(confirm) && !"yes".equals(confirm)) {
 
 			Console.println("Abort operation", "red");
 			return;
@@ -248,7 +236,7 @@ public class SalesforceClientCommand {
 			
 			records[0] = so;
 			
-			if (Validator.isNull(partnerConnection)) {
+			if (Objects.isNull(partnerConnection)) {
 				Console.println("You must do login first.", "red");
 				scanner.close();
 				return;
@@ -265,10 +253,10 @@ public class SalesforceClientCommand {
 				}
 				else {
 					Error[] errors = saveResults[i].getErrors();
-					for (int j = 0; j < errors.length; j++) {
+					for (Error error : errors) {
 						Console.println(
-							"ERROR creating record: " + errors[j].getMessage(),
-							"red");
+								"ERROR creating record: " + error.getMessage(),
+								"red");
 					}
 				}
 			}
@@ -283,15 +271,15 @@ public class SalesforceClientCommand {
      * Query for the newest contacts using the Partner Connection
      *
      * @param accountLimit How many records returned
-     * @throws PortalException
+     * @throws Exception When query failed
      */
 	@Descriptor("Query for the newest contacts using the Partner Connection")
 	public void getNewestAccount(
 			@Descriptor("How many records returned") int accountLimit
 	)
-			throws PortalException {
+			throws Exception {
 
-		if (Validator.isNull(partnerConnection)) {
+		if (Objects.isNull(partnerConnection)) {
 			Console.println("You must do login first.", "red");
 			return;
 		}
@@ -314,22 +302,22 @@ public class SalesforceClientCommand {
 					columnsValue.add(s.getId());
 					columnsValue.add(s.getField("Name").toString());
 
-					if (Validator.isNotNull(s.getField("Website"))) {
+					if (Objects.nonNull(s.getField("Website"))) {
 						columnsValue.add(s.getField("Website").toString());
 					} else {
-						columnsValue.add(StringPool.BLANK);
+						columnsValue.add("");
 					}
 
-					if (Validator.isNotNull(s.getField("Phone"))) {
+					if (Objects.nonNull(s.getField("Phone"))) {
 						columnsValue.add(s.getField("Phone").toString());
 					} else {
-						columnsValue.add(StringPool.BLANK);
+						columnsValue.add("");
 					}
 
-					if (Validator.isNotNull(s.getField("Type"))) {
+					if (Objects.nonNull(s.getField("Type"))) {
 						columnsValue.add(s.getField("Type").toString());
 					} else {
-						columnsValue.add(StringPool.BLANK);
+						columnsValue.add("");
 					}
 
 					columnsValue.add(s.getField("CreatedDate").toString());
@@ -354,15 +342,15 @@ public class SalesforceClientCommand {
      * Query for the newest contacts using the Enterprise Connection
      *
      * @param accountLimit How many records returned
-     * @throws PortalException
+     * @throws Exception When query failed
      */
 	@Descriptor("Query for the newest contacts using the Enterprise Connection")
 	public void getNewestAccountEnterprise(
 		@Descriptor("How many records returned") int accountLimit
 		)
-		throws PortalException {
+		throws Exception {
 
-		if (Validator.isNull(enterpriseConnection)) {
+		if (Objects.isNull(enterpriseConnection)) {
 			Console.println("You must do login first (Enterprise connection).", "red");
 			return;
 		}
@@ -385,22 +373,22 @@ public class SalesforceClientCommand {
 					columnsValue.add(s.getId());
 					columnsValue.add(((Account) s).getName());
 					
-					if (Validator.isNotNull(((Account) s).getWebsite())) {
-						columnsValue.add(((Account) s).getWebsite().toString());
+					if (Objects.nonNull(((Account) s).getWebsite())) {
+						columnsValue.add(((Account) s).getWebsite());
 					} else {
-						columnsValue.add(StringPool.BLANK);
+						columnsValue.add("");
 					}
 
-					if (Validator.isNotNull(((Account) s).getPhone())) {
-						columnsValue.add(((Account) s).getPhone().toString());
+					if (Objects.nonNull(((Account) s).getPhone())) {
+						columnsValue.add(((Account) s).getPhone());
 					} else {
-						columnsValue.add(StringPool.BLANK);
+						columnsValue.add("");
 					}
 
-					if (Validator.isNotNull(((Account) s).getType())) {
-						columnsValue.add(((Account) s).getType().toString());
+					if (Objects.nonNull(((Account) s).getType())) {
+						columnsValue.add(((Account) s).getType());
 					} else {
-						columnsValue.add(StringPool.BLANK);
+						columnsValue.add("");
 					}
 
 					columnsValue.add(((Account) s).getCreatedDate().toString());
