@@ -1,5 +1,5 @@
 
-# Salesforce Liferay Gogo Shell Command Client
+# Salesforce Gogo Shell Command Client
 [![Antonio Musarra's Blog](https://img.shields.io/badge/maintainer-Antonio_Musarra's_Blog-purple.svg?colorB=6e60cc)](https://www.dontesta.it)
 [![Build Status](https://travis-ci.org/amusarra/salesforce-client-gogoshell-command.svg?branch=master)](https://travis-ci.org/amusarra/salesforce-client-gogoshell-command)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/44af66efc4d246519d86fda127de0406)](https://www.codacy.com/app/amusarra/salesforce-client-gogoshell-command?utm_source=github.com&utm_medium=referral&utm_content=amusarra/salesforce-client-gogoshell-command&utm_campaign=badger)
@@ -41,7 +41,7 @@ To build the project you need:
 
 You also need to install the OSGi Salesforce SOAP API client bundle. 
 You can follow these instructions [How to install in Liferay 7 CE/DXP]( https://github.com/amusarra/salesforce-client-soap#2-how-to-install-in-liferay-7-cedxp). 
-If you want can download the bundle JAR [salesforce-client-soap (v1.0.1)](http://repo1.maven.org/maven2/it/dontesta/labs/liferay/salesforce/client/soap/salesforce-client-soap/1.0.1/salesforce-client-soap-1.0.1.jar) 
+If you want can download the bundle JAR [salesforce-client-soap (v1.0.2)](http://repo1.maven.org/maven2/it/dontesta/labs/liferay/salesforce/client/soap/salesforce-client-soap/1.0.2/salesforce-client-soap-1.0.2.jar) 
 from Maven repository and deploy to Liferay (via auto deploy directory or directly in *$LIFERAY_HOME/osgi/modules*);
 
 To start testing the plugin you need:
@@ -271,6 +271,63 @@ XML Code 1 - SOAP Request for the salesforce:getNewestAccount operation
 		</soapenv:Envelope>
 ```
 XML Code 2 - SOAP Response for the salesforce:getNewestAccount operation
+
+### 3. Not just Liferay
+This Salesforce integration example bundle can also be installed in other [OSGi R6](https://www.osgi.org/developer/downloads/release-6/) 
+containers, such as [Apache Karaf](http://karaf.apache.org).
+
+You also need to install the OSGi Salesforce SOAP API client bundle. 
+You can follow these instructions [How to install in Apache Karaf 4.x](https://github.com/amusarra/salesforce-client-soap#3-how-to-install-in-apache-karaf-4x). 
+If you want can download the bundle JAR [salesforce-client-soap (v1.0.2)](http://repo1.maven.org/maven2/it/dontesta/labs/liferay/salesforce/client/soap/salesforce-client-soap/1.0.2/salesforce-client-soap-1.0.2.jar) 
+from Maven repository and deploy by copying into your **$KARAF_HOME/deploy** directory.
+
+After you install the [Salesforce SOAP client bundle](https://github.com/amusarra/salesforce-client-soap), 
+you can install the Gogo Shell commands bundle. To install the bundle, just copy this into Apache Karaf deployment 
+directories. ($KARAF_HOME/deploy).
+
+After deploying the two bundles, connecting to the Apache Karaf console and typing the ``list`` command, you should see the 
+two bundles in the active state, as shown in Console 10.
+
+```
+karaf@root()> list
+START LEVEL 100 , List Threshold: 50
+ ID │ State  │ Lvl │ Version        │ Name
+────┼────────┼─────┼────────────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ 40 │ Active │  80 │ 4.1.2          │ Apache Karaf :: OSGi Services :: Event
+112 │ Active │  80 │ 1.0.2          │ Salesforce SOAP Client
+113 │ Active │  80 │ 1.0.0.SNAPSHOT │ Salesforce Client Gogo Shell Command
+```
+Console 10 - Check of the installed bundle
+
+Below you will see the commands available on the Salesforce scope. 
+The functionality of the commands has been explained earlier.
+
+```
+karaf@root()> salesforce
+salesforce                              salesforce:getNewestAccountEnterprise   salesforce:loginEnterprise
+salesforce:createAccount                salesforce:getnewestaccount             salesforce:loginenterprise
+salesforce:createaccount                salesforce:getnewestaccountenterprise
+salesforce:getNewestAccount             salesforce:login
+```
+Console 11 - Available command with the scope salesforce
+
+To access the configuration of this bundle, you can do it directly from the Apache Karaf console via the command: 
+``config:meta it.dontesta.labs.liferay.salesforce.client.command.configuration.SalesforceClientCommandConfiguration`
+
+```
+Meta type informations for pid: it.dontesta.labs.liferay.salesforce.client.command.configuration.SalesforceClientCommandConfiguration
+key                    │ name                     │ type    │ default                                           │ description
+───────────────────────┼──────────────────────────┼─────────┼───────────────────────────────────────────────────┼──────────────────────────────────────────────────────────────
+authEndpoint           │ Auth endpoint            │ String  │ https://login.salesforce.com/services/Soap/u/40.0 │ Setting the Salesforce endpoint
+authEndpointEnterprise │ Auth endpoint enterprise │ String  │ https://login.salesforce.com/services/Soap/c/40.0 │ Setting the Salesforce endpoint for Enterprise Connection
+traceFile              │ Trace file               │ String  │ /tmp/traceSalesforcePartner.log                   │ Setting full path of the trace file
+traceFileEnterprise    │ Trace file enterprise    │ String  │ /tmp/traceSalesforceEnterprise.log                │ Setting full path of the trace file for Enterprise Connection
+traceMessage           │ Trace message            │ boolean │ true                                              │ Setting true if trace message
+prettyPrintXml         │ Pretty print xml         │ boolean │ true                                              │ Setting true if trace message pretty
+```
+Console 11 - OSGi MetaType configuration
+
+You can of course change the values based on your needs.
 
 ### Resources
 If you follow this resources you could see how to use Salesforce SOAP API.
