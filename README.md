@@ -5,13 +5,17 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/44af66efc4d246519d86fda127de0406)](https://www.codacy.com/app/amusarra/salesforce-client-gogoshell-command?utm_source=github.com&utm_medium=referral&utm_content=amusarra/salesforce-client-gogoshell-command&utm_campaign=badger)
 [![Twitter Follow](https://img.shields.io/twitter/follow/antonio_musarra.svg?style=social&label=%40antonio_musarra%20on%20Twitter&style=plastic)](https://twitter.com/antonio_musarra)
 
-This project is born as demo for using the **[Salesforce SOAP API Client OSGi Bundle](https://github.com/amusarra/salesforce-client-soap)**. 
-This sample project implements a set of Gogo Shell commands that allow us to interact with the Salesforce CRM system.
+This project is born as demo for using the 
+**[Salesforce SOAP API Client OSGi Bundle](https://github.com/amusarra/salesforce-client-soap)**. 
+This sample project implements a set of Gogo Shell commands that allow us to 
+interact with the Salesforce CRM system.
 
-The Force.com SOAP API (formerly known as the Force.com Web Services API) lets you integrate Force.com applications 
-that can create, retrieve, update or delete records managed by Salesforce, Force.com, and Database.com, records such 
-as accounts, leads, and custom objects. With more than 20 different calls, SOAP API also lets you to maintain passwords, 
-perform searches, and much more. You can use the SOAP API with any programming language that supports Web services.
+The Force.com SOAP API (formerly known as the Force.com Web Services API) 
+lets you integrate Force.com applications that can create, retrieve, update or 
+delete records managed by Salesforce, Force.com, and Database.com, records such 
+as accounts, leads, and custom objects. With more than 20 different calls, SOAP 
+API also lets you to maintain passwords, perform searches, and much more. 
+You can use the SOAP API with any programming language that supports Web services.
 
 
 ![Figure 1 - Integration scenario Liferay 7 and CRM via SOAP](https://s3.amazonaws.com/dfc-wiki/en/images/1/17/SOAP-API-01.png)
@@ -22,15 +26,16 @@ The commands that are implemented:
 2. **salesforce:createAccount**: Create account into your Salesforce instance
 3. **salesforce:getNewestAccount**: Query for the newest accounts
 
-The diagram in Figure 1 shows a possible integration scenario between Liferay and the CRM system that in this 
-case is Salesforce.com. The CRM Application (Figure 1) in this case is implemented by this project.
+The diagram in Figure 1 shows a possible integration scenario between 
+Liferay and the CRM system that in this case is Salesforce.com. 
+The CRM Application (Figure 1) in this case is implemented by this project.
 
 ![Figure 1 - Integration scenario Liferay 7 and CRM via SOAP](https://www.dontesta.it/wp-content/uploads/2016/07/Figure_1_OverviewIntegrationScenarioSOAPLiferay7.jpg)
 
 Figure 1 - Integration scenario Liferay 7 and CRM (in this case Salesforce.com) via SOAP
 
-The version of this project was tested on Liferay 7 CE GA4. You can download the tomcat bundle of 
-the [Liferay 7 CE GA4](https://sourceforge.net/projects/lportal/files/Liferay%20Portal/7.0.3%20GA4/liferay-ce-portal-tomcat-7.0-ga4-20170613175008905.zip/download) from sourceforge.
+The version of this project was tested on Liferay 7.1 CE GA1. 
+You can download the tomcat bundle of the [Liferay 7.1 CE GA1](https://sourceforge.net/projects/lportal/files/Liferay%20Portal/7.1.0%20GA1/liferay-ce-portal-tomcat-7.1.0-ga1-20180703012531655.zip/download) from sourceforge.
 
 ### 1. Getting started
 To build the project you need:
@@ -40,8 +45,8 @@ To build the project you need:
 3. Git tools
 
 You also need to install the OSGi Salesforce SOAP API client bundle. 
-You can follow these instructions [How to install in Liferay 7 CE/DXP]( https://github.com/amusarra/salesforce-client-soap#2-how-to-install-in-liferay-7-cedxp). 
-If you want can download the bundle JAR [salesforce-client-soap (v1.0.2)](http://repo1.maven.org/maven2/it/dontesta/labs/liferay/salesforce/client/soap/salesforce-client-soap/1.0.2/salesforce-client-soap-1.0.2.jar) 
+You can follow these instructions [How to install in Liferay 7/7.1 CE/DXP]( https://github.com/amusarra/salesforce-client-soap#2-how-to-install-in-liferay-7-cedxp). 
+If you want can download the bundle JAR [salesforce-client-soap (v1.1.0)](http://repo1.maven.org/maven2/it/dontesta/labs/liferay/salesforce/client/soap/salesforce-client-soap/1.1.0/salesforce-client-soap-1.1.0.jar) 
 from Maven repository and deploy to Liferay (via auto deploy directory or directly in *$LIFERAY_HOME/osgi/modules*);
 
 To start testing the plugin you need:
@@ -69,8 +74,8 @@ while for Gradle is set by the property **auto.deploy.dir** (inside the gradle.p
 
 The default value for the two properties:
 
-1. **liferay.home** /opt/liferay-ce-portal-7.0-ga4
-2. **auto.deploy.dir** /opt/liferay-ce-portal-7.0-ga4/deploy
+1. **liferay.home** /opt/liferay-ce-portal-7.1.0-ga1
+2. **auto.deploy.dir** /opt/liferay-ce-portal-7.1.0-ga1/deploy
 
 If you want could customize the deployment directory in this two way (Maven or Gradle):
 
@@ -88,14 +93,15 @@ Check if the bundles are installed correctly via Gogo Shell.
 $ telnet localhost 11311
 g! lb | grep Salesforce
 527|Active     |   10|Salesforce Client Gogo Shell Command (1.0.0.SNAPSHOT)
-528|Active     |    1|Salesforce SOAP Client (1.0.1)
+528|Active     |    1|Salesforce SOAP Client (1.1.0)
 true
 ```
 
 Both bundles are installed correctly.
 
 ### 2. Gogo Shell Command in action
-Bundles are installed correctly, so we can begin to see how to use commands. The commands that are implemented:
+Bundles are installed correctly, so we can begin to see how to use commands. 
+The commands that are implemented:
 
 1. **salesforce:login**: Login to your Salesforce instance
 2. **salesforce:createAccount**: Create account into your Salesforce instance
@@ -189,7 +195,9 @@ Console 8 - Get the last one newest accounts
 ```
 Console 9 - Result of the salesforce:getNewestAccount
 
-The [SalesforceClientCommand](https://github.com/amusarra/salesforce-client-gogoshell-command/blob/master/src/main/java/it/dontesta/labs/liferay/salesforce/client/command/SalesforceClientCommand.java) OSGi component is linked to the [SalesforceClientCommandConfiguration](https://github.com/amusarra/salesforce-client-gogoshell-command/blob/master/src/main/java/it/dontesta/labs/liferay/salesforce/client/command/configuration/SalesforceClientCommandConfiguration.java) configuration (via **configurationPid** attribute).
+The [SalesforceClientCommand](https://github.com/amusarra/salesforce-client-gogoshell-command/blob/master/src/main/java/it/dontesta/labs/liferay/salesforce/client/command/SalesforceClientCommand.java) 
+OSGi component is linked to the [SalesforceClientCommandConfiguration](https://github.com/amusarra/salesforce-client-gogoshell-command/blob/master/src/main/java/it/dontesta/labs/liferay/salesforce/client/command/configuration/SalesforceClientCommandConfiguration.java) 
+configuration (via **configurationPid** attribute).
 
 ```java
 ...
@@ -311,7 +319,9 @@ salesforce:getNewestAccount             salesforce:login
 ```
 Console 11 - Available command with the scope salesforce
 
-To access the configuration of this bundle, you can do it directly from the Apache Karaf console via the command: 
+To access the configuration of this bundle, you can do it directly from the 
+Apache Karaf console via the command: 
+
 ``config:meta it.dontesta.labs.liferay.salesforce.client.command.configuration.SalesforceClientCommandConfiguration``
 
 ```
@@ -327,7 +337,8 @@ prettyPrintXml         │ Pretty print xml         │ boolean │ true        
 ```
 Console 11 - OSGi MetaType configuration
 
-You can of course change the values based on your needs. Apache Karaf provides a [set of commands](http://karaf.apache.org/manual/latest/#__code_config_code_commands) to 
+You can of course change the values based on your needs. Apache Karaf 
+provides a [set of commands](http://karaf.apache.org/manual/latest/#__code_config_code_commands) to 
 manage the configuration.
 
 ### Resources
@@ -345,7 +356,7 @@ Video 1 - Liferay 7: Demo Salesforce Gogo Shell Command
 ### Project License
 The MIT License (MIT)
 
-Copyright &copy; 2017 Antonio Musarra's Blog - [https://www.dontesta.it](https://www.dontesta.it "Antonio Musarra's Blog") , 
+Copyright &copy; 2018 Antonio Musarra's Blog - [https://www.dontesta.it](https://www.dontesta.it "Antonio Musarra's Blog") , 
 [antonio.musarra@gmail.com](mailto:antonio.musarra@gmail.com "Antonio Musarra Email")
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

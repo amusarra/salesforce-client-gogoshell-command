@@ -43,13 +43,13 @@ import aQute.bnd.annotation.metatype.Meta;
 public interface SalesforceClientCommandConfiguration {
 
 	@Meta.AD(
-		deflt = "https://login.salesforce.com/services/Soap/u/40.0", 
+		deflt = "https://login.salesforce.com/services/Soap/u/43.0",
 		description = "Setting the Salesforce endpoint", 
 		required = false)
 	public String authEndpoint();
 
 	@Meta.AD(
-		deflt = "https://login.salesforce.com/services/Soap/c/40.0",
+		deflt = "https://login.salesforce.com/services/Soap/c/43.0",
 		description = "Setting the Salesforce endpoint for Enterprise Connection",
 		required = false)
 	public String authEndpointEnterprise();
