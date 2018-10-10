@@ -286,7 +286,7 @@ containers, such as [Apache Karaf](http://karaf.apache.org).
 
 You also need to install the OSGi Salesforce SOAP API client bundle. 
 You can follow these instructions [How to install in Apache Karaf 4.x](https://github.com/amusarra/salesforce-client-soap#3-how-to-install-in-apache-karaf-4x). 
-If you want can download the bundle JAR [salesforce-client-soap (v1.0.2)](http://repo1.maven.org/maven2/it/dontesta/labs/liferay/salesforce/client/soap/salesforce-client-soap/1.0.2/salesforce-client-soap-1.0.2.jar) 
+If you want can download the bundle JAR [salesforce-client-soap (v1.1.0)](http://repo1.maven.org/maven2/it/dontesta/labs/liferay/salesforce/client/soap/salesforce-client-soap/1.1.0/salesforce-client-soap-1.1.0.jar) 
 from Maven repository and deploy by copying into your **$KARAF_HOME/deploy** directory.
 
 After you install the [Salesforce SOAP client bundle](https://github.com/amusarra/salesforce-client-soap), 
@@ -302,8 +302,8 @@ START LEVEL 100 , List Threshold: 50
  ID │ State  │ Lvl │ Version        │ Name
 ────┼────────┼─────┼────────────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────
  40 │ Active │  80 │ 4.1.2          │ Apache Karaf :: OSGi Services :: Event
-112 │ Active │  80 │ 1.0.2          │ Salesforce SOAP Client
-113 │ Active │  80 │ 1.0.0.SNAPSHOT │ Salesforce Client Gogo Shell Command
+112 │ Active │  80 │ 1.1.0          │ Salesforce SOAP Client
+113 │ Active │  80 │ 1.1.0.SNAPSHOT │ Salesforce Client Gogo Shell Command
 ```
 Console 10 - Check of the installed bundle
 
@@ -328,8 +328,8 @@ Apache Karaf console via the command:
 Meta type informations for pid: it.dontesta.labs.liferay.salesforce.client.command.configuration.SalesforceClientCommandConfiguration
 key                    │ name                     │ type    │ default                                           │ description
 ───────────────────────┼──────────────────────────┼─────────┼───────────────────────────────────────────────────┼──────────────────────────────────────────────────────────────
-authEndpoint           │ Auth endpoint            │ String  │ https://login.salesforce.com/services/Soap/u/40.0 │ Setting the Salesforce endpoint
-authEndpointEnterprise │ Auth endpoint enterprise │ String  │ https://login.salesforce.com/services/Soap/c/40.0 │ Setting the Salesforce endpoint for Enterprise Connection
+authEndpoint           │ Auth endpoint            │ String  │ https://login.salesforce.com/services/Soap/u/44.0 │ Setting the Salesforce endpoint
+authEndpointEnterprise │ Auth endpoint enterprise │ String  │ https://login.salesforce.com/services/Soap/c/44.0 │ Setting the Salesforce endpoint for Enterprise Connection
 traceFile              │ Trace file               │ String  │ /tmp/traceSalesforcePartner.log                   │ Setting full path of the trace file
 traceFileEnterprise    │ Trace file enterprise    │ String  │ /tmp/traceSalesforceEnterprise.log                │ Setting full path of the trace file for Enterprise Connection
 traceMessage           │ Trace message            │ boolean │ true                                              │ Setting true if trace message
