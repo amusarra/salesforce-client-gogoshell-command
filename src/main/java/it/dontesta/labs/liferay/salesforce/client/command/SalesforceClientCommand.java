@@ -28,16 +28,11 @@ package it.dontesta.labs.liferay.salesforce.client.command;
 
 import static org.fusesource.jansi.Ansi.ansi;
 
-import java.util.*;
+import aQute.bnd.annotation.metatype.Configurable;
 
 import com.sforce.soap.enterprise.Connector;
 import com.sforce.soap.enterprise.EnterpriseConnection;
 import com.sforce.soap.enterprise.sobject.Account;
-import org.apache.felix.service.command.Descriptor;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Modified;
-
 import com.sforce.soap.partner.Error;
 import com.sforce.soap.partner.PartnerConnection;
 import com.sforce.soap.partner.QueryResult;
@@ -45,93 +40,365 @@ import com.sforce.soap.partner.SaveResult;
 import com.sforce.soap.partner.sobject.SObject;
 import com.sforce.ws.ConnectorConfig;
 
-import aQute.bnd.annotation.metatype.Configurable;
 import de.vandermeer.asciitable.AsciiTable;
 import de.vandermeer.skb.interfaces.transformers.textformat.TextAlignment;
+
 import it.dontesta.labs.liferay.salesforce.client.command.configuration.SalesforceClientCommandConfiguration;
 import it.dontesta.labs.liferay.salesforce.client.command.util.Console;
 
+import java.util.*;
+
+import org.apache.felix.service.command.Descriptor;
+
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Modified;
+
 /**
- * Gogo Shell Command Series for Salesforce 
+ * Gogo Shell Command Series for Salesforce
  * (Example: create leads, create customers, search, etc.).
- * 
+ *
  * @author Antonio Musarra antonio.musarra@gmail.com
  */
 @Component(
-		configurationPid = "it.dontesta.labs.liferay.salesforce.client.command.configuration.SalesforceClientCommandConfiguration",
-		property = { 
-				"osgi.command.function=login",
-				"osgi.command.function=loginEnterprise",
-				"osgi.command.function=createAccount",
-				"osgi.command.function=getNewestAccount",
-				"osgi.command.function=getNewestAccountEnterprise",
-				"osgi.command.scope=salesforce"
-		}, 
-		service = Object.class
+	configurationPid = "it.dontesta.labs.liferay.salesforce.client.command.configuration.SalesforceClientCommandConfiguration",
+	property = {
+		"osgi.command.function=login", "osgi.command.function=loginEnterprise",
+		"osgi.command.function=createAccount",
+		"osgi.command.function=getNewestAccount",
+		"osgi.command.function=getNewestAccountEnterprise",
+		"osgi.command.scope=salesforce"
+	},
+	service = Object.class
 )
-@Descriptor("Gogo Shell Command Series for Salesforce "
-		+ "(Example: create leads, create customers, search, etc.).")
+@Descriptor(
+	"Gogo Shell Command Series for Salesforce " +
+		"(Example: create leads, create customers, search, etc.)."
+)
 public class SalesforceClientCommand {
 
-    private static PartnerConnection partnerConnection = null;
-    private static EnterpriseConnection enterpriseConnection = null;
-    private volatile SalesforceClientCommandConfiguration _configuration;
+	/**
+	 * Create account into your Salesforce instance using the Partner Connection
+	 *
+	 * @throws Exception When create account failed
+	 */
+	@Descriptor(
+		"Create account into your Salesforce instance using the Partner Connection"
+	)
+	public void createAccount() throws Exception {
+		System.out.println(ansi().eraseScreen());
 
-    /**
+		Scanner scanner = new Scanner(System.in);
+
+		Console.print("Account Name: ");
+		String accountName = scanner.nextLine();
+
+		Console.print("Web Site: ");
+		String website = scanner.nextLine();
+
+		Console.print("Phone: ");
+		String phone = scanner.nextLine();
+
+		Console.print(
+			"Do you confirm that I can start creating this account? (y): ");
+
+		String confirm = Optional.of(
+			scanner.nextLine()
+		).orElse(
+			"y"
+		);
+
+		confirm = confirm.toLowerCase(
+		).trim();
+
+		if (!"y".equals(confirm) && !"yes".equals(confirm)) {
+			Console.println("Abort operation", "red");
+
+			return;
+		}
+
+		SObject[] records = new SObject[1];
+
+		try {
+			SObject so = new SObject();
+
+			so.setType("Account");
+			so.setField("Name", accountName);
+			so.setField("WebSite", website);
+			so.setField("Phone", phone);
+
+			records[0] = so;
+
+			if (Objects.isNull(partnerConnection)) {
+				Console.println("You must do login first.", "red");
+				scanner.close();
+
+				return;
+			}
+
+			SaveResult[] saveResults = partnerConnection.create(records);
+
+			// check the returned results for any errors
+
+			for (int i = 0; i < saveResults.length; i++) {
+				if (saveResults[i].isSuccess()) {
+					Console.println(
+						i + ". Successfully created record - Id: " +
+							saveResults[i].getId(),
+						"yellow");
+				}
+				else {
+					Error[] errors = saveResults[i].getErrors();
+
+					for (Error error : errors) {
+						Console.println(
+							"ERROR creating record: " + error.getMessage(),
+							"red");
+					}
+				}
+			}
+		}
+		catch (Exception e) {
+			System.out.println(ansi().eraseScreen());
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Query for the newest contacts using the Partner Connection
+	 *
+	 * @param accountLimit How many records returned
+	 * @throws Exception When query failed
+	 */
+	@Descriptor("Query for the newest contacts using the Partner Connection")
+	public void getNewestAccount(
+			@Descriptor("How many records returned") int accountLimit)
+		throws Exception {
+
+		if (Objects.isNull(partnerConnection)) {
+			Console.println("You must do login first.", "red");
+
+			return;
+		}
+
+		AsciiTable at = new AsciiTable();
+
+		at.addRule();
+		at.addRow(
+			"Id", "Account Name", "Web Site", "Phone", "Type", "CreatedDate");
+		at.addRule();
+
+		try {
+			QueryResult queryResults = partnerConnection.query(
+				"SELECT Id, Name, Type, Website, CreatedDate, CreatedById, " +
+					"Phone FROM Account ORDER BY CreatedDate DESC LIMIT " +
+						accountLimit);
+
+			if (queryResults.getSize() > 0) {
+				for (SObject s : queryResults.getRecords()) {
+					Collection<String> columnsValue = new ArrayList<>();
+					columnsValue.add(s.getId());
+					columnsValue.add(
+						s.getField(
+							"Name"
+						).toString());
+
+					if (Objects.nonNull(s.getField("Website"))) {
+						columnsValue.add(
+							s.getField(
+								"Website"
+							).toString());
+					}
+					else {
+						columnsValue.add("");
+					}
+
+					if (Objects.nonNull(s.getField("Phone"))) {
+						columnsValue.add(
+							s.getField(
+								"Phone"
+							).toString());
+					}
+					else {
+						columnsValue.add("");
+					}
+
+					if (Objects.nonNull(s.getField("Type"))) {
+						columnsValue.add(
+							s.getField(
+								"Type"
+							).toString());
+					}
+					else {
+						columnsValue.add("");
+					}
+
+					columnsValue.add(
+						s.getField(
+							"CreatedDate"
+						).toString());
+
+					at.addRow(columnsValue);
+					at.addRule();
+				}
+			}
+			else {
+				at.addRow("No Account found");
+				at.setTextAlignment(TextAlignment.CENTER);
+				at.addRule();
+			}
+
+			Console.println(at.render(160), "white");
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Query for the newest contacts using the Enterprise Connection
+	 *
+	 * @param accountLimit How many records returned
+	 * @throws Exception When query failed
+	 */
+	@Descriptor("Query for the newest contacts using the Enterprise Connection")
+	public void getNewestAccountEnterprise(
+			@Descriptor("How many records returned") int accountLimit)
+		throws Exception {
+
+		if (Objects.isNull(enterpriseConnection)) {
+			Console.println(
+				"You must do login first (Enterprise connection).", "red");
+
+			return;
+		}
+
+		AsciiTable at = new AsciiTable();
+
+		at.addRule();
+		at.addRow(
+			"Id", "Account Name", "Web Site", "Phone", "Type", "CreatedDate");
+		at.addRule();
+
+		try {
+			com.sforce.soap.enterprise.QueryResult queryResults =
+				enterpriseConnection.query(
+					"SELECT Id, Name, Type, Website, CreatedDate, CreatedById, " +
+						"Phone FROM Account ORDER BY CreatedDate DESC LIMIT " +
+							accountLimit);
+
+			if (queryResults.getSize() > 0) {
+				for (com.sforce.soap.enterprise.sobject.SObject s :
+						queryResults.getRecords()) {
+
+					Collection<String> columnsValue = new ArrayList<>();
+					columnsValue.add(s.getId());
+					columnsValue.add(((Account)s).getName());
+
+					if (Objects.nonNull(((Account)s).getWebsite())) {
+						columnsValue.add(((Account)s).getWebsite());
+					}
+					else {
+						columnsValue.add("");
+					}
+
+					if (Objects.nonNull(((Account)s).getPhone())) {
+						columnsValue.add(((Account)s).getPhone());
+					}
+					else {
+						columnsValue.add("");
+					}
+
+					if (Objects.nonNull(((Account)s).getType())) {
+						columnsValue.add(((Account)s).getType());
+					}
+					else {
+						columnsValue.add("");
+					}
+
+					columnsValue.add(
+						((Account)s).getCreatedDate(
+						).toString());
+
+					at.addRow(columnsValue);
+					at.addRule();
+				}
+			}
+			else {
+				at.addRow("No Account found");
+				at.setTextAlignment(TextAlignment.CENTER);
+				at.addRule();
+			}
+
+			Console.println(at.render(160), "white");
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
 	 * Login to your Saleforce instance using the Partner Connection
-	 * 
+	 *
 	 * @param username
 	 *            Your Salesforce username
 	 * @param password
 	 *            Your Saleforce password (Note: append your API Key to Password)
 	 * @throws Exception When login failed
 	 */
-	@Descriptor("Login to your Salesforce instance using the Partner Connection")
+	@Descriptor(
+		"Login to your Salesforce instance using the Partner Connection"
+	)
 	public void login(
-		@Descriptor("The your username") String username,
-		@Descriptor("The your password + append your API Key") String password
-		)
+			@Descriptor("The your username") String username,
+			@Descriptor("The your password + append your API Key")
+				String password)
 		throws Exception {
-		
+
 		boolean success = false;
 
 		try {
 			ConnectorConfig config = new ConnectorConfig();
+
 			config.setUsername(username);
 			config.setPassword(password);
 			config.setAuthEndpoint(_configuration.authEndpoint());
 			config.setTraceFile(_configuration.traceFile());
 			config.setTraceMessage(_configuration.traceMessage());
 			config.setPrettyPrintXml(_configuration.prettyPrintXml());
-			
+
 			partnerConnection = new PartnerConnection(config);
 			success = true;
 
 			System.out.println(ansi().eraseScreen());
 
 			System.out.println(
-                ansi().render(
-                    "@|green Login successful to Salesforce with username "
-                + username
-                + "|@"));
+				ansi().render(
+					"@|green Login successful to Salesforce with username " +
+						username + "|@"));
 
-			System.out.println(ansi().render("@|yellow Welcome "
-                + partnerConnection.getUserInfo().getUserFullName()
-                + "|@"));
+			System.out.println(
+				ansi().render(
+					"@|yellow Welcome " +
+						partnerConnection.getUserInfo(
+						).getUserFullName() + "|@"));
 
-			System.out.println(ansi().render("@|yellow Your sessionId is: "
-                + partnerConnection.getSessionHeader().getSessionId()
-                + "|@"));
+			System.out.println(
+				ansi().render(
+					"@|yellow Your sessionId is: " +
+						partnerConnection.getSessionHeader(
+						).getSessionId() + "|@"));
 		}
 		catch (Exception e) {
 			System.out.println(ansi().eraseScreen());
 			e.printStackTrace();
 		}
-		
+
 		if (!success) {
 			System.out.println(
 				ansi().render(
-					"@|red Login error to Salesforce with username " + username + "|@"));
+					"@|red Login error to Salesforce with username " +
+						username + "|@"));
 		}
 	}
 
@@ -144,17 +411,20 @@ public class SalesforceClientCommand {
 	 *            Your Saleforce password (Note: append your API Key to Password)
 	 * @throws Exception When login failed
 	 */
-	@Descriptor("Login to your Salesforce instance using the Enterprise Connection")
+	@Descriptor(
+		"Login to your Salesforce instance using the Enterprise Connection"
+	)
 	public void loginEnterprise(
 			@Descriptor("The your username") String username,
-			@Descriptor("The your password + append your API Key") String password
-	)
-			throws Exception {
+			@Descriptor("The your password + append your API Key")
+				String password)
+		throws Exception {
 
 		boolean success = false;
 
 		try {
 			ConnectorConfig config = new ConnectorConfig();
+
 			config.setUsername(username);
 			config.setPassword(password);
 			config.setAuthEndpoint(_configuration.authEndpointEnterprise());
@@ -168,18 +438,21 @@ public class SalesforceClientCommand {
 			System.out.println(ansi().eraseScreen());
 
 			System.out.println(
-                    ansi().render(
-                            "@|green Login successful to Salesforce with username "
-                                    + username
-                                    + "|@"));
+				ansi().render(
+					"@|green Login successful to Salesforce with username " +
+						username + "|@"));
 
-			System.out.println(ansi().render("@|yellow Welcome "
-                    + enterpriseConnection.getUserInfo().getUserFullName()
-                    + "|@"));
+			System.out.println(
+				ansi().render(
+					"@|yellow Welcome " +
+						enterpriseConnection.getUserInfo(
+						).getUserFullName() + "|@"));
 
-			System.out.println(ansi().render("@|yellow Your sessionId is: "
-                    + enterpriseConnection.getSessionHeader().getSessionId()
-                    + "|@"));
+			System.out.println(
+				ansi().render(
+					"@|yellow Your sessionId is: " +
+						enterpriseConnection.getSessionHeader(
+						).getSessionId() + "|@"));
 		}
 		catch (Exception e) {
 			System.out.println(ansi().eraseScreen());
@@ -188,231 +461,22 @@ public class SalesforceClientCommand {
 
 		if (!success) {
 			System.out.println(
-					ansi().render(
-							"@|red Login error to Salesforce with username " + username + "|@"));
+				ansi().render(
+					"@|red Login error to Salesforce with username " +
+						username + "|@"));
 		}
 	}
 
-	/**
-	 * Create account into your Salesforce instance using the Partner Connection
-	 * 
-	 * @throws Exception When create account failed
-	 */
-	@Descriptor("Create account into your Salesforce instance using the Partner Connection")
-	public void createAccount() throws Exception {
-		System.out.println(ansi().eraseScreen());
-
-		Scanner scanner = new Scanner(System.in);
-		
-		Console.print("Account Name: ");
-		String accountName = scanner.nextLine();
-
-		Console.print("Web Site: ");
-		String website = scanner.nextLine();
-
-		Console.print("Phone: ");
-		String phone = scanner.nextLine();
-
-		Console.print(
-			"Do you confirm that I can start creating this account? (y): ");
-		
-		String confirm = Optional.of(scanner.nextLine()).orElse("y");
-		confirm = confirm.toLowerCase().trim();
-		
-		if (!"y".equals(confirm) && !"yes".equals(confirm)) {
-
-			Console.println("Abort operation", "red");
-			return;
-		}
-
-		SObject[] records = new SObject[1];
-
-		try {
-			SObject so = new SObject();
-			so.setType("Account");
-			so.setField("Name", accountName);
-			so.setField("WebSite", website);
-			so.setField("Phone", phone);
-			
-			records[0] = so;
-			
-			if (Objects.isNull(partnerConnection)) {
-				Console.println("You must do login first.", "red");
-				scanner.close();
-				return;
-			}
-			
-			SaveResult[] saveResults = partnerConnection.create(records);
-
-			// check the returned results for any errors
-			for (int i = 0; i < saveResults.length; i++) {
-				if (saveResults[i].isSuccess()) {
-					Console.println(
-						i + ". Successfully created record - Id: " +
-							saveResults[i].getId(), "yellow");
-				}
-				else {
-					Error[] errors = saveResults[i].getErrors();
-					for (Error error : errors) {
-						Console.println(
-								"ERROR creating record: " + error.getMessage(),
-								"red");
-					}
-				}
-			}
-		}
-		catch (Exception e) {
-			System.out.println(ansi().eraseScreen());
-			e.printStackTrace();
-		}
-	}
-
-    /**
-     * Query for the newest contacts using the Partner Connection
-     *
-     * @param accountLimit How many records returned
-     * @throws Exception When query failed
-     */
-	@Descriptor("Query for the newest contacts using the Partner Connection")
-	public void getNewestAccount(
-			@Descriptor("How many records returned") int accountLimit
-	)
-			throws Exception {
-
-		if (Objects.isNull(partnerConnection)) {
-			Console.println("You must do login first.", "red");
-			return;
-		}
-
-		AsciiTable at = new AsciiTable();
-		at.addRule();
-		at.addRow(
-				"Id", "Account Name", "Web Site", "Phone",
-				"Type", "CreatedDate");
-		at.addRule();
-
-		try {
-			QueryResult queryResults = partnerConnection.query(
-					"SELECT Id, Name, Type, Website, CreatedDate, CreatedById, " +
-							"Phone FROM Account ORDER BY CreatedDate DESC LIMIT " +
-							accountLimit);
-			if (queryResults.getSize() > 0) {
-				for (SObject s : queryResults.getRecords()) {
-					Collection<String> columnsValue = new ArrayList<>();
-					columnsValue.add(s.getId());
-					columnsValue.add(s.getField("Name").toString());
-
-					if (Objects.nonNull(s.getField("Website"))) {
-						columnsValue.add(s.getField("Website").toString());
-					} else {
-						columnsValue.add("");
-					}
-
-					if (Objects.nonNull(s.getField("Phone"))) {
-						columnsValue.add(s.getField("Phone").toString());
-					} else {
-						columnsValue.add("");
-					}
-
-					if (Objects.nonNull(s.getField("Type"))) {
-						columnsValue.add(s.getField("Type").toString());
-					} else {
-						columnsValue.add("");
-					}
-
-					columnsValue.add(s.getField("CreatedDate").toString());
-
-					at.addRow(columnsValue);
-					at.addRule();
-				}
-			} else {
-				at.addRow("No Account found");
-				at.setTextAlignment(TextAlignment.CENTER);
-				at.addRule();
-			}
-
-			Console.println(at.render(160), "white");
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-    /**
-     * Query for the newest contacts using the Enterprise Connection
-     *
-     * @param accountLimit How many records returned
-     * @throws Exception When query failed
-     */
-	@Descriptor("Query for the newest contacts using the Enterprise Connection")
-	public void getNewestAccountEnterprise(
-		@Descriptor("How many records returned") int accountLimit
-		)
-		throws Exception {
-
-		if (Objects.isNull(enterpriseConnection)) {
-			Console.println("You must do login first (Enterprise connection).", "red");
-			return;
-		}
-
-		AsciiTable at = new AsciiTable();
-		at.addRule();
-		at.addRow(
-			"Id", "Account Name", "Web Site", "Phone",
-			"Type", "CreatedDate");
-		at.addRule();
-		
-		try {
-			com.sforce.soap.enterprise.QueryResult queryResults = enterpriseConnection.query(
-				"SELECT Id, Name, Type, Website, CreatedDate, CreatedById, " +
-					"Phone FROM Account ORDER BY CreatedDate DESC LIMIT " +
-					accountLimit);
-			if (queryResults.getSize() > 0) {
-				for (com.sforce.soap.enterprise.sobject.SObject s : queryResults.getRecords()) {
-					Collection<String> columnsValue = new ArrayList<>();
-					columnsValue.add(s.getId());
-					columnsValue.add(((Account) s).getName());
-					
-					if (Objects.nonNull(((Account) s).getWebsite())) {
-						columnsValue.add(((Account) s).getWebsite());
-					} else {
-						columnsValue.add("");
-					}
-
-					if (Objects.nonNull(((Account) s).getPhone())) {
-						columnsValue.add(((Account) s).getPhone());
-					} else {
-						columnsValue.add("");
-					}
-
-					if (Objects.nonNull(((Account) s).getType())) {
-						columnsValue.add(((Account) s).getType());
-					} else {
-						columnsValue.add("");
-					}
-
-					columnsValue.add(((Account) s).getCreatedDate().toString());
-					
-					at.addRow(columnsValue);
-					at.addRule();
-				}
-			} else {
-				at.addRow("No Account found");
-				at.setTextAlignment(TextAlignment.CENTER);
-				at.addRule();
-			}
-			
-			Console.println(at.render(160), "white");
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
 	@Activate
 	@Modified
 	protected void activate(Map<String, Object> properties) {
 		_configuration = Configurable.createConfigurable(
 			SalesforceClientCommandConfiguration.class, properties);
 	}
+
+	private static EnterpriseConnection enterpriseConnection = null;
+	private static PartnerConnection partnerConnection = null;
+
+	private volatile SalesforceClientCommandConfiguration _configuration;
+
 }

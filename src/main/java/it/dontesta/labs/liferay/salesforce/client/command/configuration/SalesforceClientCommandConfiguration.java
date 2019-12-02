@@ -40,37 +40,40 @@ public interface SalesforceClientCommandConfiguration {
 
 	@Meta.AD(
 		deflt = "https://login.salesforce.com/services/Soap/u/44.0",
-		description = "Setting the Salesforce endpoint", 
-		required = false)
+		description = "Setting the Salesforce endpoint", required = false
+	)
 	public String authEndpoint();
 
 	@Meta.AD(
 		deflt = "https://login.salesforce.com/services/Soap/c/44.0",
 		description = "Setting the Salesforce endpoint for Enterprise Connection",
-		required = false)
+		required = false
+	)
 	public String authEndpointEnterprise();
 
 	@Meta.AD(
-		deflt = "/tmp/traceSalesforcePartner.log", 
-		description = "Setting full path of the trace file", 
-		required = false)
+		deflt = "/tmp/traceSalesforcePartner.log",
+		description = "Setting full path of the trace file", required = false
+	)
 	public String traceFile();
 
 	@Meta.AD(
 		deflt = "/tmp/traceSalesforceEnterprise.log",
 		description = "Setting full path of the trace file for Enterprise Connection",
-		required = false)
+		required = false
+	)
 	public String traceFileEnterprise();
 
 	@Meta.AD(
-		deflt = "true", 
-		description = "Setting true if trace message", 
-		required = false)
+		deflt = "true", description = "Setting true if trace message",
+		required = false
+	)
 	public boolean traceMessage();
 
 	@Meta.AD(
-		deflt = "true", 
-		description = "Setting true if trace message pretty", 
-		required = false)
+		deflt = "true", description = "Setting true if trace message pretty",
+		required = false
+	)
 	public boolean prettyPrintXml();
+
 }
