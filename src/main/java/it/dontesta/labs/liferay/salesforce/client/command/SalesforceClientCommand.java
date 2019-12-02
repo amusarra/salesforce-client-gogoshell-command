@@ -46,7 +46,12 @@ import de.vandermeer.skb.interfaces.transformers.textformat.TextAlignment;
 import it.dontesta.labs.liferay.salesforce.client.command.configuration.SalesforceClientCommandConfiguration;
 import it.dontesta.labs.liferay.salesforce.client.command.util.Console;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Scanner;
 
 import org.apache.felix.service.command.Descriptor;
 
@@ -129,14 +134,14 @@ public class SalesforceClientCommand {
 
 			records[0] = so;
 
-			if (Objects.isNull(partnerConnection)) {
+			if (Objects.isNull(_partnerConnection)) {
 				Console.println("You must do login first.", "red");
 				scanner.close();
 
 				return;
 			}
 
-			SaveResult[] saveResults = partnerConnection.create(records);
+			SaveResult[] saveResults = _partnerConnection.create(records);
 
 			// check the returned results for any errors
 
@@ -175,7 +180,7 @@ public class SalesforceClientCommand {
 			@Descriptor("How many records returned") int accountLimit)
 		throws Exception {
 
-		if (Objects.isNull(partnerConnection)) {
+		if (Objects.isNull(_partnerConnection)) {
 			Console.println("You must do login first.", "red");
 
 			return;
@@ -189,7 +194,7 @@ public class SalesforceClientCommand {
 		at.addRule();
 
 		try {
-			QueryResult queryResults = partnerConnection.query(
+			QueryResult queryResults = _partnerConnection.query(
 				"SELECT Id, Name, Type, Website, CreatedDate, CreatedById, " +
 					"Phone FROM Account ORDER BY CreatedDate DESC LIMIT " +
 						accountLimit);
@@ -197,6 +202,7 @@ public class SalesforceClientCommand {
 			if (queryResults.getSize() > 0) {
 				for (SObject s : queryResults.getRecords()) {
 					Collection<String> columnsValue = new ArrayList<>();
+
 					columnsValue.add(s.getId());
 					columnsValue.add(
 						s.getField(
@@ -266,7 +272,7 @@ public class SalesforceClientCommand {
 			@Descriptor("How many records returned") int accountLimit)
 		throws Exception {
 
-		if (Objects.isNull(enterpriseConnection)) {
+		if (Objects.isNull(_enterpriseConnection)) {
 			Console.println(
 				"You must do login first (Enterprise connection).", "red");
 
@@ -282,7 +288,7 @@ public class SalesforceClientCommand {
 
 		try {
 			com.sforce.soap.enterprise.QueryResult queryResults =
-				enterpriseConnection.query(
+				_enterpriseConnection.query(
 					"SELECT Id, Name, Type, Website, CreatedDate, CreatedById, " +
 						"Phone FROM Account ORDER BY CreatedDate DESC LIMIT " +
 							accountLimit);
@@ -292,6 +298,7 @@ public class SalesforceClientCommand {
 						queryResults.getRecords()) {
 
 					Collection<String> columnsValue = new ArrayList<>();
+
 					columnsValue.add(s.getId());
 					columnsValue.add(((Account)s).getName());
 
@@ -367,7 +374,7 @@ public class SalesforceClientCommand {
 			config.setTraceMessage(_configuration.traceMessage());
 			config.setPrettyPrintXml(_configuration.prettyPrintXml());
 
-			partnerConnection = new PartnerConnection(config);
+			_partnerConnection = new PartnerConnection(config);
 			success = true;
 
 			System.out.println(ansi().eraseScreen());
@@ -380,13 +387,13 @@ public class SalesforceClientCommand {
 			System.out.println(
 				ansi().render(
 					"@|yellow Welcome " +
-						partnerConnection.getUserInfo(
+						_partnerConnection.getUserInfo(
 						).getUserFullName() + "|@"));
 
 			System.out.println(
 				ansi().render(
 					"@|yellow Your sessionId is: " +
-						partnerConnection.getSessionHeader(
+						_partnerConnection.getSessionHeader(
 						).getSessionId() + "|@"));
 		}
 		catch (Exception e) {
@@ -432,7 +439,7 @@ public class SalesforceClientCommand {
 			config.setTraceMessage(_configuration.traceMessage());
 			config.setPrettyPrintXml(_configuration.prettyPrintXml());
 
-			enterpriseConnection = Connector.newConnection(config);
+			_enterpriseConnection = Connector.newConnection(config);
 			success = true;
 
 			System.out.println(ansi().eraseScreen());
@@ -445,13 +452,13 @@ public class SalesforceClientCommand {
 			System.out.println(
 				ansi().render(
 					"@|yellow Welcome " +
-						enterpriseConnection.getUserInfo(
+						_enterpriseConnection.getUserInfo(
 						).getUserFullName() + "|@"));
 
 			System.out.println(
 				ansi().render(
 					"@|yellow Your sessionId is: " +
-						enterpriseConnection.getSessionHeader(
+						_enterpriseConnection.getSessionHeader(
 						).getSessionId() + "|@"));
 		}
 		catch (Exception e) {
@@ -474,8 +481,8 @@ public class SalesforceClientCommand {
 			SalesforceClientCommandConfiguration.class, properties);
 	}
 
-	private static EnterpriseConnection enterpriseConnection = null;
-	private static PartnerConnection partnerConnection = null;
+	private static EnterpriseConnection _enterpriseConnection = null;
+	private static PartnerConnection _partnerConnection = null;
 
 	private volatile SalesforceClientCommandConfiguration _configuration;
 
