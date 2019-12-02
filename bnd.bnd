@@ -1,20 +1,18 @@
-Bundle-Name: Salesforce Client Gogo Shell Command
-Bundle-SymbolicName: it.dontesta.labs.liferay.salesforce.client.command
-Bundle-Version: 1.2.0.SNAPSHOT
 Bundle-Category: Salesforce
-Bundle-ContactAddress: https://www.dontesta.it/contatti/
+Bundle-ContactAddress: https://www.dontesta.it/contatti
+Bundle-Copyright: Antonio Musarra's Blog (c) 2019
 Bundle-Developers: antonio.musarra@gmail.com
 Bundle-DocURL: https://www.dontesta.it/salesforce-client-gogoshell-command
-Bundle-Copyright: Antonio Musarra's Blog (c) 2018
-Bundle-License: MIT License
 Bundle-Icon: Console
-Bundle-Vendor: Antonio Musarra's Blog
+Bundle-License: MIT License
+Bundle-Name: Salesforce Client Gogo Shell Command
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-
-Import-Package: \
+Bundle-SymbolicName: it.dontesta.labs.liferay.salesforce.client.command
+Bundle-Vendor: Antonio Musarra's Blog
+Bundle-Version: 1.2.0.SNAPSHOT
+Import-Package:\
 	org.apache.felix.service.command;status=provisional;version='[0.10,1)',\
 	!org.antlr.stringtemplate,\
 	!org.slf4j.impl,\
 	*
-
 -metatype: *
