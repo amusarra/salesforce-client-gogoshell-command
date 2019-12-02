@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>it.dontesta.labs.liferay.salesforce.client.command</groupId>
 	<artifactId>salesforce-client-gogoshell-command</artifactId>
-	<version>1.2.0-SNAPSHOT</version>
+	<version>1.2.0.SNAPSHOT</version>
 	<name>Salesforce Liferay Gogo Shell Command Client</name>
 	<description>Salesforce Liferay Gogo Shell Command Client</description>
 	<url>https://www.dontesta.it/salesforce-client-gogoshell-command</url>
