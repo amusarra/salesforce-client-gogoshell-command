@@ -1,13 +1,8 @@
-/**
- * 
- */
-package it.dontesta.labs.liferay.salesforce.client.command.util;
-
 /*-
  * #%L
  * salesforce-client-command
  * %%
- * Copyright (C) 2017 Antonio Musarra's Blog
+ * Copyright (C) 2019 Antonio Musarra's Blog
  * %%
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -15,10 +10,10 @@ package it.dontesta.labs.liferay.salesforce.client.command.util;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -29,13 +24,16 @@ package it.dontesta.labs.liferay.salesforce.client.command.util;
  * #L%
  */
 
+package it.dontesta.labs.liferay.salesforce.client.command.util;
+
 import static org.fusesource.jansi.Ansi.ansi;
 
 /**
- * @author amusarra
+ * @author Antonio Musarra
  *
  */
 public final class Console {
+
 	public static void print(String msg) {
 		print(msg, "green");
 	}
