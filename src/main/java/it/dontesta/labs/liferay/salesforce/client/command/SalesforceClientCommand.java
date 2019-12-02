@@ -58,6 +58,7 @@ import org.apache.felix.service.command.Descriptor;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
+import org.osgi.service.component.annotations.ServiceScope;
 
 /**
  * Gogo Shell Command Series for Salesforce
@@ -74,7 +75,9 @@ import org.osgi.service.component.annotations.Modified;
 		"osgi.command.function=getNewestAccountEnterprise",
 		"osgi.command.scope=salesforce"
 	},
-	service = Object.class
+	service = Object.class,
+	scope = ServiceScope.SINGLETON,
+	immediate = true
 )
 @Descriptor(
 	"Gogo Shell Command Series for Salesforce " +
@@ -406,6 +409,7 @@ public class SalesforceClientCommand {
 				ansi().render(
 					"@|red Login error to Salesforce with username " +
 						username + "|@"));
+			_partnerConnection = null;
 		}
 	}
 
@@ -471,6 +475,7 @@ public class SalesforceClientCommand {
 				ansi().render(
 					"@|red Login error to Salesforce with username " +
 						username + "|@"));
+			_enterpriseConnection = null;
 		}
 	}
 
@@ -481,9 +486,9 @@ public class SalesforceClientCommand {
 			SalesforceClientCommandConfiguration.class, properties);
 	}
 
-	private static EnterpriseConnection _enterpriseConnection = null;
-	private static PartnerConnection _partnerConnection = null;
+	private EnterpriseConnection _enterpriseConnection = null;
+	private PartnerConnection _partnerConnection = null;
 
-	private volatile SalesforceClientCommandConfiguration _configuration;
+	private SalesforceClientCommandConfiguration _configuration;
 
 }
