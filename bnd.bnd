@@ -1,6 +1,6 @@
 Bundle-Name: Salesforce Client Gogo Shell Command
 Bundle-SymbolicName: it.dontesta.labs.liferay.salesforce.client.command
-Bundle-Version: 1.0.0-SNAPSHOT
+Bundle-Version: 1.2.0.SNAPSHOT
 Bundle-Category: Salesforce
 Bundle-ContactAddress: https://www.dontesta.it/contatti/
 Bundle-Developers: antonio.musarra@gmail.com
@@ -18,16 +18,3 @@ Import-Package: \
 	*
 
 -metatype: *
-
--includeresource: \
-	@jansi-1.16.jar,\
-	@asciitable-0.3.2.jar,\
-	@ascii-utf-themes-0.0.1.jar,\
-	@skb-interfaces-0.0.1.jar,\
-	@ST4-4.0.7.jar,\
-	@char-translation-0.0.2.jar,\
-	@commons-lang3-3.4.jar,\
-	@antlr-runtime-3.5.jar,\
-	@antlr4-4.5.1.jar,\
-	@org.apache.felix.gogo.runtime-1.0.6.jar,\
-	@biz.aQute.bndlib-3.2.0.jar
