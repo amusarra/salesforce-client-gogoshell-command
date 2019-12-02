@@ -4,7 +4,7 @@ package it.dontesta.labs.liferay.salesforce.client.command;
  * #%L
  * salesforce-client-command
  * %%
- * Copyright (C) 2017 Antonio Musarra's Blog
+ * Copyright (C) 2019 Antonio Musarra's Blog
  * %%
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
