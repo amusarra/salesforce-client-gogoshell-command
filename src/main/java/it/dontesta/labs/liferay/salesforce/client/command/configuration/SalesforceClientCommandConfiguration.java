@@ -34,7 +34,7 @@ import aQute.bnd.annotation.metatype.Meta;
 @Meta.OCD(
 	id = "it.dontesta.labs.liferay.salesforce.client.command.configuration.SalesforceClientCommandConfiguration",
 	localization = "content/Language",
-	name = "salesforce.client.command.configuration.name"
+	name = "salesforce-client-command-configuration-name"
 )
 public interface SalesforceClientCommandConfiguration {
 
