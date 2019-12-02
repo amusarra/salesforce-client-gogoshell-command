@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>it.dontesta.labs.liferay.salesforce.client.command</groupId>
 	<artifactId>salesforce-client-gogoshell-command</artifactId>
-	<version>1.1.0-SNAPSHOT</version>
+	<version>1.2.0-SNAPSHOT</version>
 	<name>Salesforce Liferay Gogo Shell Command Client</name>
 	<description>Salesforce Liferay Gogo Shell Command Client</description>
 	<url>https://www.dontesta.it/salesforce-client-gogoshell-command</url>
-	<inceptionYear>2018</inceptionYear>
+	<inceptionYear>2019</inceptionYear>
 	<licenses>
 		<license>
 			<name>MIT License</name>
@@ -24,7 +24,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.source>1.8</java.source>
 		<java.target>1.8</java.target>
-		<liferay.home>/opt/liferay-ce-portal-7.1.0-ga1</liferay.home>
+		<liferay.home>/opt/liferay-ce-portal-7.2.1-ga2</liferay.home>
 	</properties>
 	<developers>
 	<developer>
@@ -56,7 +56,7 @@
 		<dependency>
 			<groupId>it.dontesta.labs.liferay.salesforce.client.soap</groupId>
 			<artifactId>salesforce-client-soap</artifactId>
-			<version>1.1.0</version>
+			<version>1.2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.felix</groupId>
