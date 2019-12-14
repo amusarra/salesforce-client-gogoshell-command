@@ -19,16 +19,18 @@ The commands that are implemented:
 3. **salesforce:createAccount**: Create account into your Salesforce instance
 4. **salesforce:getNewestAccount**: Query for the newest accounts
 5. **salesforce:getNewestAccountEnterprise**: Query for the newest accounts (Enterprise Mode)
+6. **salesforce:createUsersFromCSV:** Create Salesforce users from CSV file
 
 The diagram in Figure 1 shows a possible integration scenario between Liferay and the CRM system that in this case is Salesforce.com. The CRM Application (Figure 1) in this case is implemented by this project.
 
 ![Figure 1 - Integration scenario Liferay 7 and CRM via SOAP](https://www.dontesta.it/wp-content/uploads/2016/07/Figure_1_OverviewIntegrationScenarioSOAPLiferay7.jpg)
 
-Figure 1 - Integration scenario Liferay 7/DXP and CRM (in this case Salesforce.com) via SOAP
+Figure 1 - Integration scenario Liferay 7.x/DXP and CRM (in this case Salesforce.com) via SOAP
 
 The version of this project was tested on Liferay 7.2 CE GA2. You can download the tomcat bundle of the [Liferay 7.2 CE GA2](https://sourceforge.net/projects/lportal/files/Liferay%20Portal/7.2.1%20GA2/liferay-ce-portal-tomcat-7.2.1-ga2-20191111141448326.tar.gz/download) from sourceforge.
 
-### 1. Getting started
+##1. Getting started
+
 To build the project you need:
 
 1. Sun/Oracle JDK 1.8
@@ -91,7 +93,8 @@ true
 
 Both bundles are installed correctly.
 
-### 2. Gogo Shell Command in action
+## 2. Gogo Shell Command in action
+
 Bundles are installed correctly, so we can begin to see how to use commands. The commands that are implemented:
 
 1. **salesforce:login**: Login to your Salesforce instance (Partner Mode)
@@ -99,6 +102,7 @@ Bundles are installed correctly, so we can begin to see how to use commands. The
 3. **salesforce:createAccount**: Create account into your Salesforce instance
 4. **salesforce:getNewestAccount**: Query for the newest accounts
 5. **salesforce:getNewestAccountEnterprise**: Query for the newest accounts (Enterprise Mode)
+6. **salesforce:createUsersFromCSV:** Create Salesforce users from CSV file
 
 You can display online help for each command typing (on Gogo Shell) ``help $scope:$command`` and obtain the following result (for salesforce:login):
 
@@ -189,6 +193,7 @@ The [SalesforceClientCommand](https://github.com/amusarra/salesforce-client-gogo
 				"osgi.command.function=createAccount",
 				"osgi.command.function=getNewestAccount",
 				"osgi.command.function=getNewestAccountEnterprise",
+        "osgi.command.function=createUsersFromCSV",
 				"osgi.command.scope=salesforce"
 		},
 		service = Object.class
@@ -263,14 +268,15 @@ XML Code 1 - SOAP Request for the salesforce:getNewestAccount operation
 ```
 XML Code 2 - SOAP Response for the salesforce:getNewestAccount operation
 
-### 3. Not just Liferay
-This Salesforce integration example bundle can also be installed in other [OSGi R6](https://www.osgi.org/developer/downloads/release-6/) containers, such as [Apache Karaf](http://karaf.apache.org). Your Karaf instance must have the feature scr installed. You could run the installation by running the following command from the console: 
+## 3. Not just Liferay
+
+This Salesforce integration example bundle can also be installed in other [OSGi R6](https://www.osgi.org/developer/downloads/release-6/) containers, such as [Apache Karaf](http://karaf.apache.org). Your Karaf instance must have the feature scr installed. You also need to install the biz.aQute.bndlib and Salesforce SOAP API client bundle. You could run the installation by running the following command from the console:
 
 ```shell
 karaf@root()> feature:install scr
+karaf@root()> install mvn:biz.aQute.bnd/biz.aQute.bndlib/4.2.0
+karaf@root()> install mvn:it.dontesta.labs.liferay.salesforce.client.soap/salesforce-client-soap/1.2.0
 ```
-
-You also need to install the OSGi Salesforce SOAP API client bundle. You can follow these instructions [How to install in Apache Karaf 4.x](https://github.com/amusarra/salesforce-client-soap#3-how-to-install-in-apache-karaf-4x). If you want can download the bundle JAR [salesforce-client-soap (v1.2.0)](http://repo1.maven.org/maven2/it/dontesta/labs/liferay/salesforce/client/soap/salesforce-client-soap/1.2.0/salesforce-client-soap-1.2.0.jar) from Maven repository and deploy by copying into your **$KARAF_HOME/deploy** directory.
 
 After you install the [Salesforce SOAP client bundle](https://github.com/amusarra/salesforce-client-soap), you can install the Gogo Shell commands bundle. To install the bundle, just copy this into Apache Karaf deployment directories. ($KARAF_HOME/deploy).
 
@@ -282,7 +288,7 @@ Figure 3 - Check of the installed bundle
 
 Below you will see the commands available on the Salesforce scope. The functionality of the commands has been explained earlier.
 
-```
+```shell
 karaf@root()> salesforce
 salesforce                              salesforce:getNewestAccountEnterprise   salesforce:loginEnterprise
 salesforce:createAccount                salesforce:getnewestaccount             salesforce:loginenterprise
@@ -305,7 +311,8 @@ Console 11 - OSGi MetaType configuration
 
 You can of course change the values based on your needs. Apache Karaf provides a [set of commands](http://karaf.apache.org/manual/latest/#__code_config_code_commands) to manage the configuration.
 
-### Resources
+## Resources
+
 If you follow this resources you could see how to use Salesforce SOAP API.
 
 1. [Introducing SOAP API](https://developer.salesforce.com/docs/atlas.en-us.api.meta/api/sforce_api_quickstart_intro.htm)
@@ -317,7 +324,8 @@ If you follow this resources you could see how to use Salesforce SOAP API.
 
 Video 1 - Liferay 7: Demo Salesforce Gogo Shell Command
 
-### Project License
+## Project License
+
 The MIT License (MIT)
 
 Copyright &copy; 2019 Antonio Musarra's Blog - [https://www.dontesta.it](https://www.dontesta.it "Antonio Musarra's Blog") , [antonio.musarra@gmail.com](mailto:antonio.musarra@gmail.com "Antonio Musarra Email")
