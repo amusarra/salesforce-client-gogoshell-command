@@ -2,7 +2,7 @@ Bundle-Category: Salesforce
 Bundle-ContactAddress: https://www.dontesta.it/contatti
 Bundle-Copyright: Antonio Musarra's Blog (c) 2019
 Bundle-Developers: antonio.musarra@gmail.com
-Bundle-DocURL: https://www.dontesta.it/liferay-7-salesforce-com-gogo-shell-command-client/
+Bundle-DocURL: https://www.dontesta.it/liferay-7-salesforce-com-gogo-shell-command-client
 Bundle-Icon: Console
 Bundle-License: MIT License
 Bundle-Name: Salesforce Client Gogo Shell Command

@@ -1,0 +1,3 @@
+FIRST_NAME;LAST_NAME;ALIAS;USERNAME;NICKNAME;EMAIL;ACTIVE;LANGUAGE;LOCALE;TIME_ZONE;CITY;COUNTRY;STATE;STREET;POSTAL_CODE;EMAIL_ENCODING;PROFILE_ID
+Alessandra;Rossi;arossi;alessandra.rossi@sample.com;arossi;alessandra.rossi@sample.com;true;IT;IT;Europe/Rome;Rome;Italy;Rome;Via Zeno 9;00100;UTF-8;00e20000001POfI
+Andrea;Bianchi;abianchi;andrea.bianchi@sample.com;abianchi;andrea.bianchi@sample.com;true;IT;IT;Europe/Rome;Catania;Italy;Catania;Via Etnea 90;95100;UTF-8;00e20000001POfI

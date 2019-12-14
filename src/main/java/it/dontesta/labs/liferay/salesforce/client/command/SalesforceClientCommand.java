@@ -44,10 +44,13 @@ import de.vandermeer.asciitable.AsciiTable;
 import de.vandermeer.skb.interfaces.transformers.textformat.TextAlignment;
 
 import it.dontesta.labs.liferay.salesforce.client.command.configuration.SalesforceClientCommandConfiguration;
+import it.dontesta.labs.liferay.salesforce.client.command.csv.model.SalesforceUserModel;
+import it.dontesta.labs.liferay.salesforce.client.command.util.CSVUtil;
 import it.dontesta.labs.liferay.salesforce.client.command.util.Console;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -55,9 +58,9 @@ import java.util.Scanner;
 
 import org.apache.felix.service.command.Descriptor;
 
+import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.ServiceScope;
 
 /**
@@ -68,16 +71,16 @@ import org.osgi.service.component.annotations.ServiceScope;
  */
 @Component(
 	configurationPid = "it.dontesta.labs.liferay.salesforce.client.command.configuration.SalesforceClientCommandConfiguration",
+	immediate = true,
 	property = {
 		"osgi.command.function=login", "osgi.command.function=loginEnterprise",
 		"osgi.command.function=createAccount",
+		"osgi.command.function=createUsersFromCSV",
 		"osgi.command.function=getNewestAccount",
 		"osgi.command.function=getNewestAccountEnterprise",
 		"osgi.command.scope=salesforce"
 	},
-	service = Object.class,
-	scope = ServiceScope.SINGLETON,
-	immediate = true
+	scope = ServiceScope.SINGLETON, service = Object.class
 )
 @Descriptor(
 	"Gogo Shell Command Series for Salesforce " +
@@ -136,6 +139,108 @@ public class SalesforceClientCommand {
 			so.setField("Phone", phone);
 
 			records[0] = so;
+
+			if (Objects.isNull(_partnerConnection)) {
+				Console.println("You must do login first.", "red");
+				scanner.close();
+
+				return;
+			}
+
+			SaveResult[] saveResults = _partnerConnection.create(records);
+
+			// check the returned results for any errors
+
+			for (int i = 0; i < saveResults.length; i++) {
+				if (saveResults[i].isSuccess()) {
+					Console.println(
+						i + ". Successfully created record - Id: " +
+							saveResults[i].getId(),
+						"yellow");
+				}
+				else {
+					Error[] errors = saveResults[i].getErrors();
+
+					for (Error error : errors) {
+						Console.println(
+							"ERROR creating record: " + error.getMessage(),
+							"red");
+					}
+				}
+			}
+		}
+		catch (Exception e) {
+			System.out.println(ansi().eraseScreen());
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Create users into your Salesforce instance from CSV
+	 * using the Partner Connection
+	 *
+	 * @throws Exception When create users failed
+	 */
+	@Descriptor(
+		"Create users into your Salesforce instance from CSV using the Partner Connection"
+	)
+	public void createUsersFromCSV() throws Exception {
+		System.out.println(ansi().eraseScreen());
+
+		Scanner scanner = new Scanner(System.in);
+
+		Console.print("Do you confirm that I can start creating users? (y): ");
+
+		String confirm = Optional.of(
+			scanner.nextLine()
+		).orElse(
+			"y"
+		);
+
+		confirm = confirm.toLowerCase(
+		).trim();
+
+		if (!"y".equals(confirm) && !"yes".equals(confirm)) {
+			Console.println("Abort operation", "red");
+
+			return;
+		}
+
+		List<SalesforceUserModel> entriesMapToBean;
+
+		entriesMapToBean = CSVUtil.readCSVToModel(
+			_bundleContext, SalesforceUserModel.class);
+
+		List<SObject> usersObject = new ArrayList<>();
+
+		for (SalesforceUserModel user : entriesMapToBean) {
+			SObject sObjectUser = new SObject();
+
+			sObjectUser.setType("user");
+			sObjectUser.setField("FirstName", user.getFirstName());
+			sObjectUser.setField("LastName", user.getLastName());
+			sObjectUser.setField("Alias", user.getAlias());
+			sObjectUser.setField("Username", user.getUserName());
+			sObjectUser.setField("CommunityNickname", user.getNickName());
+			sObjectUser.setField("Email", user.getEmail());
+			sObjectUser.setField("EmailEncodingKey", user.getEmailEconding());
+			sObjectUser.setField("IsActive", user.isActive());
+			sObjectUser.setField("LocaleSidKey", user.getLocale());
+			sObjectUser.setField("LanguageLocaleKey", user.getLanguage());
+			sObjectUser.setField("TimeZoneSidKey", user.getTimeZone());
+			sObjectUser.setField("City", user.getCity());
+			sObjectUser.setField("Country", user.getCountry());
+			sObjectUser.setField("State", user.getState());
+			sObjectUser.setField("Street", user.getStreet());
+			sObjectUser.setField("PostalCode", user.getPostalCode());
+			sObjectUser.setField("ProfileId", user.getProfileId());
+
+			usersObject.add(sObjectUser);
+		}
+
+		try {
+			SObject[] records = new SObject[usersObject.size()];
+			records = usersObject.toArray(records);
 
 			if (Objects.isNull(_partnerConnection)) {
 				Console.println("You must do login first.", "red");
@@ -480,15 +585,18 @@ public class SalesforceClientCommand {
 	}
 
 	@Activate
-	@Modified
-	protected void activate(Map<String, Object> properties) {
+	protected void activate(
+		BundleContext bundleContext, Map<String, Object> properties) {
+
+		_bundleContext = bundleContext;
+
 		_configuration = Configurable.createConfigurable(
 			SalesforceClientCommandConfiguration.class, properties);
 	}
 
-	private EnterpriseConnection _enterpriseConnection = null;
-	private PartnerConnection _partnerConnection = null;
-
+	private BundleContext _bundleContext;
 	private SalesforceClientCommandConfiguration _configuration;
+	private EnterpriseConnection _enterpriseConnection;
+	private PartnerConnection _partnerConnection;
 
 }
