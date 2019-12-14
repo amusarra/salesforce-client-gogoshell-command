@@ -1,4 +1,7 @@
 dist: trusty
 sudo: required
 language: java
-install: mvn clean package
+
+install:
+  - mvn clean package
+  - gradle clean build
